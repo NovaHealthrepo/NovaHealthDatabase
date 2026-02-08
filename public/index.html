@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="zh-HK">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nova Health - 用戶管理</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Microsoft JhengHei", "PingFang TC", sans-serif;
+        background: #f0f2f5;
+        color: #333;
+      }
+
+      header {
+        background: linear-gradient(135deg, #0077b6, #00b4d8);
+        color: #fff;
+        padding: 20px 32px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      header h1 {
+        font-size: 1.5rem;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 24px auto;
+        padding: 0 16px;
+      }
+
+      /* Tabs */
+      .tabs {
+        display: flex;
+        gap: 4px;
+        margin-bottom: 16px;
+      }
+      .tabs button {
+        padding: 10px 24px;
+        border: none;
+        border-radius: 8px 8px 0 0;
+        cursor: pointer;
+        font-size: 1rem;
+        background: #d9e2ec;
+        color: #333;
+        transition: 0.2s;
+      }
+      .tabs button.active {
+        background: #fff;
+        font-weight: bold;
+        box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.08);
+      }
+
+      .panel {
+        display: none;
+        background: #fff;
+        border-radius: 0 8px 8px 8px;
+        padding: 24px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+      }
+      .panel.active {
+        display: block;
+      }
+
+      /* Table */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 12px;
+        font-size: 0.9rem;
+      }
+      th,
+      td {
+        padding: 10px 12px;
+        text-align: left;
+        border-bottom: 1px solid #e8e8e8;
+      }
+      th {
+        background: #f5f7fa;
+        position: sticky;
+        top: 0;
+      }
+      tr:hover {
+        background: #f0f8ff;
+      }
+
+      /* Buttons */
+      .btn {
+        padding: 6px 14px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.85rem;
+        transition: 0.15s;
+      }
+      .btn-primary {
+        background: #0077b6;
+        color: #fff;
+      }
+      .btn-primary:hover {
+        background: #005f8a;
+      }
+      .btn-danger {
+        background: #e63946;
+        color: #fff;
+      }
+      .btn-danger:hover {
+        background: #b02a37;
+      }
+      .btn-success {
+        background: #2a9d8f;
+        color: #fff;
+      }
+      .btn-success:hover {
+        background: #21867a;
+      }
+      .btn-sm {
+        padding: 4px 10px;
+        font-size: 0.8rem;
+      }
+
+      .toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .search-box {
+        padding: 8px 12px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        width: 260px;
+        font-size: 0.9rem;
+      }
+
+      /* Modal */
+      .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.45);
+        z-index: 100;
+        justify-content: center;
+        align-items: center;
+      }
+      .modal-overlay.show {
+        display: flex;
+      }
+      .modal {
+        background: #fff;
+        border-radius: 12px;
+        padding: 28px 32px;
+        width: 520px;
+        max-width: 95vw;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+      }
+      .modal h2 {
+        margin-bottom: 16px;
+        font-size: 1.2rem;
+      }
+      .modal label {
+        display: block;
+        margin-top: 10px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #555;
+      }
+      .modal input,
+      .modal select {
+        width: 100%;
+        padding: 8px 10px;
+        margin-top: 4px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 0.9rem;
+      }
+      .modal-actions {
+        margin-top: 20px;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+      }
+
+      .badge-active {
+        background: #d4edda;
+        color: #155724;
+        padding: 2px 8px;
+        border-radius: 10px;
+        font-size: 0.78rem;
+      }
+      .badge-inactive {
+        background: #f8d7da;
+        color: #721c24;
+        padding: 2px 8px;
+        border-radius: 10px;
+        font-size: 0.78rem;
+      }
+
+      .table-wrap {
+        overflow-x: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>🏥 Nova Health 用戶管理系統</h1>
+    </header>
+
+    <div class="container">
+      <!-- Tabs -->
+      <div class="tabs">
+        <button class="active" data-tab="users" onclick="switchTab('users')">
+          👤 用戶列表
+        </button>
+        <button data-tab="profiles" onclick="switchTab('profiles')">
+          📋 用戶檔案
+        </button>
+      </div>
+
+      <!-- ============ Users Panel ============ -->
+      <div id="panel-users" class="panel active">
+        <div class="toolbar">
+          <input
+            class="search-box"
+            id="searchUser"
+            placeholder="搜尋用戶名稱..."
+            oninput="renderUsers()"
+          />
+          <button class="btn btn-primary" onclick="openUserModal()">
+            ＋ 新增用戶
+          </button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>姓名</th>
+                <th>有檔案</th>
+                <th>建立時間</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="userTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ============ Profiles Panel ============ -->
+      <div id="panel-profiles" class="panel">
+        <div class="toolbar">
+          <input
+            class="search-box"
+            id="searchProfile"
+            placeholder="搜尋電話/地址/姓名..."
+            oninput="renderProfiles()"
+          />
+          <button class="btn btn-primary" onclick="openProfileModal()">
+            ＋ 新增檔案
+          </button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>UserID</th>
+                <th>姓名</th>
+                <th>電話</th>
+                <th>地址</th>
+                <th>聯絡人</th>
+                <th>性別</th>
+                <th>出生日期</th>
+                <th>身份證</th>
+                <th>狀態</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="profileTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== User Modal ========== -->
+    <div class="modal-overlay" id="userModal">
+      <div class="modal">
+        <h2 id="userModalTitle">新增用戶</h2>
+        <input type="hidden" id="userEditId" />
+        <label>姓名 <span style="color: red">*</span></label>
+        <input id="userName" placeholder="輸入用戶姓名" />
+        <div class="modal-actions">
+          <button class="btn" onclick="closeModal('userModal')">取消</button>
+          <button class="btn btn-primary" onclick="saveUser()">儲存</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== Profile Modal ========== -->
+    <div class="modal-overlay" id="profileModal">
+      <div class="modal">
+        <h2 id="profileModalTitle">新增用戶檔案</h2>
+        <input type="hidden" id="profileEditId" />
+
+        <label>用戶 ID <span style="color: red">*</span></label>
+        <select id="profileUserID"></select>
+
+        <label>電話 <span style="color: red">*</span></label>
+        <input id="profilePhone" placeholder="例: 91234567" />
+
+        <label>電郵</label>
+        <input id="profileEmail" placeholder="沒有電郵" />
+
+        <label>地址 <span style="color: red">*</span></label>
+        <input id="profileAddress" placeholder="輸入地址" />
+
+        <label>聯絡人</label>
+        <input id="profileContact" placeholder="本人" />
+
+        <label>第二電話</label>
+        <input id="profileSecondPhone" placeholder="沒有第二電話" />
+
+        <label>第二聯絡人</label>
+        <input id="profileSecondContact" placeholder="沒有第二聯絡人" />
+
+        <label>性別 <span style="color: red">*</span></label>
+        <select id="profileGender">
+          <option value="M">男 (M)</option>
+          <option value="F">女 (F)</option>
+        </select>
+
+        <label>出生日期 <span style="color: red">*</span></label>
+        <input type="date" id="profileBirth" />
+
+        <label>身份證</label>
+        <input id="profileIDcard" placeholder="請盡快提供ID" />
+
+        <label>狀態</label>
+        <select id="profileIsActive">
+          <option value="true">活躍</option>
+          <option value="false">停用</option>
+        </select>
+
+        <div class="modal-actions">
+          <button class="btn" onclick="closeModal('profileModal')">取消</button>
+          <button class="btn btn-primary" onclick="saveProfile()">儲存</button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>

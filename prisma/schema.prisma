@@ -13,7 +13,109 @@ datasource db {
   provider = "postgresql"
 }
 
-model User {
-  id    Int    @id @default(autoincrement())
-  email String @unique
+
+//Index
+model Index{
+  serviceID Int @id @default(autoincrement())
+  time DateTime @db.Time
+  date DateTime @db.Date
+  duration Int @default(2)
+  userID Int
+  user User @relation(fields: [userID], references: [userID])
+  staffID Int
+  staff Staff  @relation(fields: [staffID], references: [staffID])
+  Price Int
+  salary Decimal
+  isfreelance Boolean @default(true)
+  reportTime DateTime @db.Time
+  isReserved Boolean @default(true)
+  isAttended Boolean @default(false)
+  isRecorded Boolean @default(false)
+  createAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+//User and staff basics
+
+model User{
+  userID Int @id @default(autoincrement())
+  name String
+  profile UserProfile?
+  indices Index[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Staff{
+  staffID Int @id @default(autoincrement())
+  name String @default("Pending")
+  position String  @default("Pending")
+  positionProfile PositionProfile @relation(fields: [position],references: [position])
+  profile StaffProfile?
+  indices Index[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+//profile
+
+model UserProfile{
+  userID Int @id @unique
+  user User @relation(fields: [userID],references: [userID])
+  phone String
+  email String @default("沒有電郵")
+  address String 
+  contactPerson String @default("本人")
+  secondPhone String @default("沒有第二電話")
+  secondContactPerson String @default("沒有第二聯絡人")
+  gender Gender
+  birth DateTime @db.Date
+  IDcard String @default("請盡快提供ID")
+  IDcardUrl String? @default("暫未有身份證存檔")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  isActive Boolean @default(true)
+}
+
+model StaffProfile{
+  staffID Int @unique
+  staff Staff @relation(fields: [staffID],references: [staffID])
+  name String
+  gender Gender
+  birth DateTime @db.Date
+  phone String 
+  IDcard String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  employAt DateTime @default(now())
+  isEmployed Boolean @default(true)
+}
+
+model PositionProfile {
+  positionID Int @id @default(autoincrement())
+  position String @unique
+  staffs Staff[] 
+}
+
+//Monthly affairs (AI please ignore the following)
+model Summary{
+  Month String @unique
+  totalIncome Decimal
+  totalSalary Decimal
+  numberOfClient Int
+  numberOfStaff Int
+  ptHours Int
+  otHours Int
+  stHours Int
+  nurseHours Int
+  supportingHours Int
+}
+
+enum Gender {
+  M
+  F
 }
