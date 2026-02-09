@@ -207,6 +207,61 @@
       .table-wrap {
         overflow-x: auto;
       }
+
+      /* Grid Table (Users) */
+      .grid-table {
+        display: grid;
+        grid-template-columns: 60px 1fr 80px 140px 150px;
+        margin-top: 12px;
+        border-radius: 10px;
+        overflow: hidden;
+        border: 1px solid #e8e8e8;
+        font-size: 0.9rem;
+      }
+      .grid-table .gt-header {
+        display: contents;
+      }
+      .grid-table .gt-header span {
+        background: #f5f7fa;
+        padding: 12px 14px;
+        font-weight: 700;
+        color: #555;
+        font-size: 0.82rem;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        border-bottom: 2px solid #dde3ea;
+      }
+      .grid-table .gt-row {
+        display: contents;
+      }
+      .grid-table .gt-row > span {
+        padding: 12px 14px;
+        border-bottom: 1px solid #eef0f3;
+        display: flex;
+        align-items: center;
+        transition: background 0.15s;
+      }
+      .grid-table .gt-row:hover > span {
+        background: #f0f8ff;
+      }
+      .grid-table .gt-row:last-child > span {
+        border-bottom: none;
+      }
+      .grid-table .gt-actions {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .grid-table .gt-empty {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 32px 14px;
+        color: #aaa;
+        font-size: 0.9rem;
+      }
+      .grid-table-profile {
+        grid-template-columns: 70px 90px 110px 1fr 90px 55px 110px 100px 70px 150px;
+      }
     </style>
   </head>
   <body>
@@ -238,19 +293,15 @@
             ＋ 新增用戶
           </button>
         </div>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>姓名</th>
-                <th>有檔案</th>
-                <th>建立時間</th>
-                <th>操作</th>
-              </tr>
-            </thead>
-            <tbody id="userTableBody"></tbody>
-          </table>
+        <div class="grid-table" id="userGridTable">
+          <div class="gt-header">
+            <span>ID</span>
+            <span>姓名</span>
+            <span>有檔案</span>
+            <span>建立時間</span>
+            <span>操作</span>
+          </div>
+          <!-- rows rendered by JS -->
         </div>
       </div>
 
@@ -267,24 +318,20 @@
             ＋ 新增檔案
           </button>
         </div>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>UserID</th>
-                <th>姓名</th>
-                <th>電話</th>
-                <th>地址</th>
-                <th>聯絡人</th>
-                <th>性別</th>
-                <th>出生日期</th>
-                <th>身份證</th>
-                <th>狀態</th>
-                <th>操作</th>
-              </tr>
-            </thead>
-            <tbody id="profileTableBody"></tbody>
-          </table>
+        <div class="grid-table grid-table-profile" id="profileGridTable">
+          <div class="gt-header">
+            <span>UserID</span>
+            <span>姓名</span>
+            <span>電話</span>
+            <span>地址</span>
+            <span>聯絡人</span>
+            <span>性別</span>
+            <span>出生日期</span>
+            <span>身份證</span>
+            <span>狀態</span>
+            <span>操作</span>
+          </div>
+          <!-- rows rendered by JS -->
         </div>
       </div>
     </div>

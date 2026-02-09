@@ -1,5 +1,5 @@
 // API 配置
-export const API_BASE = "/api2";
+export const API_BASE = "/api";
 
 // API 輔助函數
 export async function apiGet(endpoint) {

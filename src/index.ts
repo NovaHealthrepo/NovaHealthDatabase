@@ -23,9 +23,6 @@ app.use("/api", userRoutes);
 app.get("/", (_req, res) => {
   res.sendFile(path.join(__dirname, "..", "public", "index.html"));
 });
-app.get("/tester", (_req, res) => {
-  res.sendFile(path.join(__dirname, "..", "public", "tester.html"));
-});
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);

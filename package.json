@@ -4,10 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "npx tsx src/index.ts",
-    "seed": "npx tsx prisma/seed.ts",
-    "start": "npx tsx src/index.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon --exec tsx src/index.ts",
+    "seed": "npx tsx prisma/seed.ts"
   },
   "keywords": [],
   "author": "",

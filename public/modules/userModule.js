@@ -26,23 +26,31 @@ export function getUsersData() {
 export function renderUsers() {
   const q = document.getElementById("searchUser").value.toLowerCase();
   const filtered = usersData.filter((u) => u.name.toLowerCase().includes(q));
-  const tbody = document.getElementById("userTableBody");
-  tbody.innerHTML = filtered
-    .map(
-      (u) => `
-    <tr>
-      <td>${u.userID}</td>
-      <td>${u.name}</td>
-      <td>${u.profile ? "✅" : "❌"}</td>
-      <td>${fmtDate(u.createdAt)}</td>
-      <td>
+  const grid = document.getElementById("userGridTable");
+  // keep the header, replace everything after it
+  const header = grid.querySelector(".gt-header").outerHTML;
+  if (filtered.length === 0) {
+    grid.innerHTML = header + `<span class="gt-empty">沒有找到用戶</span>`;
+    return;
+  }
+  grid.innerHTML =
+    header +
+    filtered
+      .map(
+        (u) => `
+    <div class="gt-row">
+      <span>${u.userID}</span>
+      <span>${u.name}</span>
+      <span>${u.profile ? "✅" : "❌"}</span>
+      <span>${fmtDate(u.createdAt)}</span>
+      <span class="gt-actions">
         <button class="btn btn-success btn-sm" onclick="window.editUser(${u.userID})">編輯</button>
         <button class="btn btn-danger btn-sm" onclick="window.deleteUser(${u.userID})">刪除</button>
-      </td>
-    </tr>
+      </span>
+    </div>
   `,
-    )
-    .join("");
+      )
+      .join("");
 }
 
 export function openUserModal(user = null) {

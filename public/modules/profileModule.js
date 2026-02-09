@@ -32,28 +32,35 @@ export function renderProfiles() {
       p.phone.includes(q) ||
       p.address.toLowerCase().includes(q),
   );
-  const tbody = document.getElementById("profileTableBody");
-  tbody.innerHTML = filtered
-    .map(
-      (p) => `
-    <tr>
-      <td>${p.userID}</td>
-      <td>${p.user?.name || "-"}</td>
-      <td>${p.phone}</td>
-      <td>${p.address}</td>
-      <td>${p.contactPerson}</td>
-      <td>${p.gender === "M" ? "男" : "女"}</td>
-      <td>${fmtDate(p.birth)}</td>
-      <td>${p.IDcard}</td>
-      <td><span class="${p.isActive ? "badge-active" : "badge-inactive"}">${p.isActive ? "活躍" : "停用"}</span></td>
-      <td>
+  const grid = document.getElementById("profileGridTable");
+  const header = grid.querySelector(".gt-header").outerHTML;
+  if (filtered.length === 0) {
+    grid.innerHTML = header + `<span class="gt-empty">沒有找到檔案</span>`;
+    return;
+  }
+  grid.innerHTML =
+    header +
+    filtered
+      .map(
+        (p) => `
+    <div class="gt-row">
+      <span>${p.userID}</span>
+      <span>${p.user?.name || "-"}</span>
+      <span>${p.phone}</span>
+      <span>${p.address}</span>
+      <span>${p.contactPerson}</span>
+      <span>${p.gender === "M" ? "男" : "女"}</span>
+      <span>${fmtDate(p.birth)}</span>
+      <span>${p.IDcard}</span>
+      <span><span class="${p.isActive ? "badge-active" : "badge-inactive"}">${p.isActive ? "活躍" : "停用"}</span></span>
+      <span class="gt-actions">
         <button class="btn btn-success btn-sm" onclick="window.editProfile(${p.userID})">編輯</button>
         <button class="btn btn-danger btn-sm" onclick="window.deleteProfile(${p.userID})">刪除</button>
-      </td>
-    </tr>
+      </span>
+    </div>
   `,
-    )
-    .join("");
+      )
+      .join("");
 }
 
 function populateProfileUserSelect(selectedId = null) {
