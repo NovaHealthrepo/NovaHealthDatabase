@@ -16,7 +16,7 @@ router.get("/indices", async (_req: Request, res: Response) => {
       orderBy: { serviceID: "asc" },
     });
     // Log service 13 to check duration from DB
-    const s13 = indices.find(i => i.serviceID === 13);
+    const s13 = indices.find((i: any) => i.serviceID === 13);
     if (s13) console.log('[BACKEND] Service 13 from Prisma:', { serviceID: s13.serviceID, duration: s13.duration, type: typeof s13.duration });
     res.json(indices);
   } catch (err) {
@@ -217,8 +217,8 @@ router.get("/user-price-sum", async (req: Request, res: Response) => {
       },
     });
 
-    const totalPrice = records.reduce((sum, record) => sum + (record.Price * Number(record.duration)), 0);
-    const totalHours = records.reduce((sum, record) => sum + Number(record.duration), 0);
+    const totalPrice = records.reduce((sum: number, record: any) => sum + (record.Price * Number(record.duration)), 0);
+    const totalHours = records.reduce((sum: number, record: any) => sum + Number(record.duration), 0);
 
     res.json({
       userID: userId,
@@ -227,7 +227,7 @@ router.get("/user-price-sum", async (req: Request, res: Response) => {
       totalPrice: Math.round(totalPrice),
       totalHours,
       recordCount: records.length,
-      records: records.map(r => ({
+      records: records.map((r: any) => ({
         serviceID: r.serviceID,
         date: r.date,
         price: r.Price,
@@ -278,10 +278,10 @@ router.get("/staff-salary-sum", async (req: Request, res: Response) => {
       },
     });
 
-    const totalSalary = records.reduce((sum, record) => 
+    const totalSalary = records.reduce((sum: number, record: any) => 
       sum + Number(record.salary), 0
     );
-    const totalHours = records.reduce((sum, record) => sum + Number(record.duration), 0);
+    const totalHours = records.reduce((sum: number, record: any) => sum + Number(record.duration), 0);
 
     res.json({
       staffID: staffId,
@@ -290,7 +290,7 @@ router.get("/staff-salary-sum", async (req: Request, res: Response) => {
       totalSalary: Math.round(totalSalary),
       totalHours,
       recordCount: records.length,
-      records: records.map(r => ({
+      records: records.map((r: any) => ({
         serviceID: r.serviceID,
         date: r.date,
         salary: Math.round(Number(r.salary)),
@@ -337,7 +337,7 @@ router.get("/monthly-summary", async (req: Request, res: Response) => {
       });
 
       // Group by user
-      const userSummary = records.reduce((acc: any, record) => {
+      const userSummary = records.reduce((acc: any, record: any) => {
         const userId = record.userID;
         if (!acc[userId]) {
           acc[userId] = {
@@ -374,7 +374,7 @@ router.get("/monthly-summary", async (req: Request, res: Response) => {
       });
 
       // Group by staff
-      const staffSummary = records.reduce((acc: any, record) => {
+      const staffSummary = records.reduce((acc: any, record: any) => {
         const staffId = record.staffID;
         if (!acc[staffId]) {
           acc[staffId] = {
