@@ -19,13 +19,13 @@ model Index{
   serviceID Int @id @default(autoincrement())
   time DateTime @db.Time
   date DateTime @db.Date
-  duration Int @default(2)
+  duration Decimal @default(2) @db.Decimal(4, 1)
   userID Int
   user User @relation(fields: [userID], references: [userID])
   staffID Int
   staff Staff  @relation(fields: [staffID], references: [staffID])
   Price Int
-  salary Decimal
+  salary Decimal @db.Decimal(15, 0)
   isfreelance Boolean @default(true)
   reportTime DateTime @db.Time
   isReserved Boolean @default(true)
@@ -105,7 +105,7 @@ model PositionProfile {
 model Summary{
   Month String @unique
   totalIncome Decimal
-  totalSalary Decimal
+  totalSalary Decimal 
   numberOfClient Int
   numberOfStaff Int
   ptHours Int

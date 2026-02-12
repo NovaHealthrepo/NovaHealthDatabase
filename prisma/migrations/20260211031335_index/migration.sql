@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Summary" ALTER COLUMN "totalSalary" SET DATA TYPE DECIMAL(65,30);

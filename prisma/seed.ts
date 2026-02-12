@@ -1,10 +1,11 @@
 import "dotenv/config";
-import express from "express";
-import { Gender, PrismaClient } from "../generated/prisma/client.ts";
+import { PrismaClient } from "../generated/prisma/client.ts";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
+import * as fs from "fs";
+import * as path from "path";
 
-console.log("tester");
+console.log("Starting seed process...");
 
 const connectionString = process.env.DATABASE_URL!;
 
@@ -12,61 +13,43 @@ const pool = new Pool({ connectionString });
 const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
-const sets = [
-  {
-    userID: 2,
-    gender: "F",
-    contactPerson: "劉小姐",
-    phone: "91200978",
-    birth: new Date("1939-10-03"),
-    IDcard: "B3075309",
-    address: "大埔帝欣院一期11座5樓A室",
-    email: "lauyatfan888@gmail.com",
-  },
-  {
-    userID: 3,
-    gender: "M",
-    contactPerson: "吳榮貞",
-    phone: "93457810",
-    birth: new Date("1960-10-10"),
-    IDcard: "C3319502",
-    address: "新界大埔元嶺46號",
-  },
-  {
-    userID: 4,
-    gender: "M",
-    contactPerson: "陳森念",
-    phone: "91731458",
-    birth: new Date("1900-01-01"),
-    IDcard: "探親簽",
-    address: "啟德沐泰街9號嘉豐匯",
-  },
-  {
-    userID: 5,
-    gender: "F",
-    contactPerson: "陳森念",
-    phone: "91731458",
-    birth: new Date("1900-01-01"),
-    IDcard: "探親簽",
-    address: "啟德沐泰街9號嘉豐匯",
-  },
-];
+// Read seed data from JSON file
+const seedDataPath = path.join(process.cwd(), "prisma", "seedData.json");
+const seedData = JSON.parse(fs.readFileSync(seedDataPath, "utf-8"));
 
 async function main() {
-  for (const set of sets) {
-    await prisma.userProfile.create({
+  console.log(`Seeding ${seedData.length} Index records...`);
+  
+  for (const record of seedData) {
+    // Parse time and date strings
+    const timeStr = record.time;
+    const dateStr = record.date;
+    const reportTimeStr = record.reportTime;
+    
+    // Create DateTime objects for time fields (using arbitrary date for time-only fields)
+    const timeDate = new Date(`1970-01-01T${timeStr}`);
+    const reportTimeDate = new Date(`1970-01-01T${reportTimeStr}`);
+    const date = new Date(dateStr);
+    
+    await prisma.index.create({
       data: {
-        userID: set.userID,
-        gender: set.gender as Gender,
-        contactPerson: set.contactPerson,
-        phone: set.phone,
-        birth: set.birth,
-        IDcard: set.IDcard,
-        address: set.address,
-        email: set.email,
+        time: timeDate,
+        date: date,
+        duration: record.duration,
+        userID: record.userID,
+        staffID: record.staffID,
+        Price: record.Price,
+        salary: record.salary,
+        isfreelance: record.isfreelance,
+        reportTime: reportTimeDate,
+        isReserved: record.isReserved,
+        isAttended: record.isAttended,
+        isRecorded: record.isRecorded,
       },
     });
   }
+  
+  console.log(`Successfully seeded ${seedData.length} Index records!`);
 }
 
 main()
