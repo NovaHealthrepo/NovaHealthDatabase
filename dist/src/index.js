@@ -19,18 +19,18 @@ app.use(basicAuth({
     realm: 'My Private Database',
 }));
 // Serve static frontend
-app.use(express.static(path.join(process.cwd(), "public")));
+app.use(express.static(path.join(__dirname, "..", "public")));
 // Serve index management frontend
-app.use("/index-manager", express.static(path.join(process.cwd(), "public-index")));
+app.use("/index-manager", express.static(path.join(__dirname, "..", "public-index")));
 // API routes
 app.use("/api", userRoutes);
 app.use("/api", indexRoutes);
 // Fallback to index.html
 app.get("/", (_req, res) => {
-    res.sendFile(path.join(process.cwd(), "public", "index.html"));
+    res.sendFile(path.join(__dirname, "..", "public", "index.html"));
 });
 app.get("/index-manager", (_req, res) => {
-    res.sendFile(path.join(process.cwd(), "public-index", "index.html"));
+    res.sendFile(path.join(__dirname, "..", "public-index", "index.html"));
 });
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 Server running on port ${PORT}`);
